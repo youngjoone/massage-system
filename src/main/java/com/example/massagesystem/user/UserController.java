@@ -30,6 +30,19 @@ public class UserController {
         return userService.createUser(user);
     }
 
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        // In a real application, you would add validation and password hashing here
+        return userService.createUser(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> loginUser(@RequestBody User loginRequest) {
+        return userService.validateUser(loginRequest.getUsername(), loginRequest.getPassword())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(401).build()); // Unauthorized
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         return ResponseEntity.ok(userService.updateUser(id, userDetails));
