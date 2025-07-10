@@ -22,8 +22,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // 메서드 보안 활성화
 public class SecurityConfig {
 
     @Autowired
@@ -57,7 +60,9 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안 함
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // OPTIONS 요청은 모두 허용
-                .requestMatchers("/api/auth/register", "/api/shops", "/api/auth/login").permitAll() // 회원가입, 가게 목록, 로그인 엔드포인트 허용
+                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // 회원가입, 로그인 엔드포인트 허용
+                .requestMatchers(HttpMethod.GET, "/api/shops", "/api/admin/shops").permitAll() // GET /api/shops 및 /api/admin/shops는 회원가입 시 필요하므로 허용
+                .requestMatchers(HttpMethod.POST, "/api/shops").authenticated() // POST /api/shops는 인증 필요
                 .requestMatchers("/api/auth/me", "/api/auth/logout", "/api/auth/refresh-token").authenticated() // /me, 로그아웃, 리프레시 토큰 엔드포인트는 인증 필요
                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
             )

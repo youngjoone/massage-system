@@ -1,6 +1,7 @@
 
 package com.example.massagesystem.shop;
 
+import com.example.massagesystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,9 @@ public class ShopService {
 
     @Autowired
     private ShopRepository shopRepository;
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 주입
 
     public List<Shop> getAllShops() {
         return shopRepository.findAll();
@@ -34,6 +38,13 @@ public class ShopService {
     }
 
     public void deleteShop(Long id) {
-        shopRepository.deleteById(id);
+        Shop shopToDelete = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+
+        // 해당 가게에 연결된 사용자가 있는지 확인
+        if (!userRepository.findByShop(shopToDelete).isEmpty()) {
+            throw new IllegalStateException("Cannot delete shop: Users are still associated with this shop.");
+        }
+
+        shopRepository.delete(shopToDelete);
     }
 }

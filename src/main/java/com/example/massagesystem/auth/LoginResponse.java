@@ -11,5 +11,6 @@ import lombok.Setter;
 public class LoginResponse {
     private String username;
     private String message;
-    private String shopName; // shopName 추가
+    private String shopName;
+    private String role; // role 추가
 }

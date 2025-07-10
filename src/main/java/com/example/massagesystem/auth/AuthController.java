@@ -68,9 +68,9 @@ public class AuthController {
                     response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
                     response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-                    return ResponseEntity.ok(new LoginResponse(user.getUsername(), "로그인 성공", user.getShop().getName()));
+                    return ResponseEntity.ok(new LoginResponse(user.getUsername(), "로그인 성공", user.getShop().getName(), user.getRole()));
                 })
-                .orElse(ResponseEntity.status(401).body(new LoginResponse(null, "Invalid credentials", null)));
+                .orElse(ResponseEntity.status(401).body(new LoginResponse(null, "Invalid credentials", null, null)));
     }
 
     @PostMapping("/register")
@@ -86,7 +86,7 @@ public class AuthController {
         user.setShop(shop); // Shop 엔티티 할당
 
         User registeredUser = userService.createUser(user);
-        return ResponseEntity.ok(new LoginResponse(registeredUser.getUsername(), "회원가입 성공", registeredUser.getShop().getName()));
+        return ResponseEntity.ok(new LoginResponse(registeredUser.getUsername(), "회원가입 성공", registeredUser.getShop().getName(), registeredUser.getRole()));
     }
 
     @PostMapping("/refresh-token")
@@ -118,12 +118,12 @@ public class AuthController {
                                 .build();
 
                         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-                        return ResponseEntity.ok(new LoginResponse(user.getUsername(), "새 액세스 토큰 발급", user.getShop().getName()));
+                        return ResponseEntity.ok(new LoginResponse(user.getUsername(), "새 액세스 토큰 발급", user.getShop().getName(), user.getRole()));
                     })
-                    .orElse(ResponseEntity.status(403).body(new LoginResponse(null, "Refresh Token is not in database!", null)));
+                    .orElse(ResponseEntity.status(403).body(new LoginResponse(null, "Refresh Token is not in database!", null, null)));
         }
 
-        return ResponseEntity.status(403).body(new LoginResponse(null, "Refresh Token is missing!", null));
+        return ResponseEntity.status(403).body(new LoginResponse(null, "Refresh Token is missing!", null, null));
     }
 
     @GetMapping("/me")
@@ -133,9 +133,9 @@ public class AuthController {
             String username = ((org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()).getUsername();
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(new LoginResponse(user.getUsername(), "현재 로그인된 사용자", user.getShop().getName()));
+            return ResponseEntity.ok(new LoginResponse(user.getUsername(), "현재 로그인된 사용자", user.getShop().getName(), user.getRole()));
         }
-        return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자", null));
+        return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자", null, null));
     }
 
     @PostMapping("/logout")
@@ -169,9 +169,9 @@ public class AuthController {
             response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-            return ResponseEntity.ok(new LoginResponse(username, "로그아웃 성공", null)); // 로그아웃 시 shopName은 null
+            return ResponseEntity.ok(new LoginResponse(username, "로그아웃 성공", null, null)); // 로그아웃 시 shopName과 role은 null
         }
-        return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자", null));
+        return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자", null, null));
     }
 }
 
