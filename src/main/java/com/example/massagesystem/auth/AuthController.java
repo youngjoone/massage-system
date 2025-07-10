@@ -108,9 +108,44 @@ public class AuthController {
     public ResponseEntity<LoginResponse> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String)) {
-            // UserDetails 객체에서 사용자 이름을 가져옵니다.
             String username = ((org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()).getUsername();
             return ResponseEntity.ok(new LoginResponse(username, "현재 로그인된 사용자"));
+        }
+        return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String)) {
+            String username = ((org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()).getUsername();
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 데이터베이스에서 리프레시 토큰 삭제
+            refreshTokenService.deleteByUserId(user.getId());
+
+            // HttpOnly 쿠키 무효화
+            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0) // 만료
+                    .sameSite("None")
+                    .build();
+
+            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/api/auth/refresh-token")
+                    .maxAge(0) // 만료
+                    .sameSite("None")
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+            return ResponseEntity.ok(new LoginResponse(username, "로그아웃 성공"));
         }
         return ResponseEntity.status(401).body(new LoginResponse(null, "인증되지 않은 사용자"));
     }

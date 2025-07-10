@@ -56,7 +56,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안 함
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/users/register", "/api/users/login", "/api/auth/login").permitAll() // 로그인 엔드포인트 추가
-                .requestMatchers("/api/auth/me").authenticated() // /api/auth/me 엔드포인트는 인증 필요
+                .requestMatchers("/api/auth/me", "/api/auth/logout").authenticated() // /api/auth/me 및 /api/auth/logout 엔드포인트는 인증 필요
                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
