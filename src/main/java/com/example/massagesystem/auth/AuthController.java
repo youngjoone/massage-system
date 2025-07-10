@@ -1,6 +1,8 @@
 
 package com.example.massagesystem.auth;
 
+import jakarta.validation.Valid;
+
 import com.example.massagesystem.shop.Shop;
 import com.example.massagesystem.shop.ShopRepository;
 import com.example.massagesystem.token.RefreshToken;
@@ -74,7 +76,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<LoginResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         // shopId로 Shop 엔티티 조회
         Shop shop = shopRepository.findById(registerRequest.getShopId())
                 .orElseThrow(() -> new RuntimeException("Shop not found"));

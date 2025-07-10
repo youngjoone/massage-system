@@ -1,11 +1,12 @@
 
 package com.example.massagesystem.shop;
 
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class ShopController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')") // ADMIN만 Shop 생성 가능
-    public Shop createShop(@RequestBody Shop shop) {
+    public Shop createShop(@Valid @RequestBody Shop shop) {
         return shopService.createShop(shop);
     }
 

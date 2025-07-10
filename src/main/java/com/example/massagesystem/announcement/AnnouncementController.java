@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/announcements")
 public class AnnouncementController {
@@ -31,7 +33,7 @@ public class AnnouncementController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Announcement> updateAnnouncement(@PathVariable Long id, @RequestBody Announcement announcementDetails) {
+    public ResponseEntity<Announcement> updateAnnouncement(@PathVariable Long id, @Valid @RequestBody Announcement announcementDetails) {
         return ResponseEntity.ok(announcementService.updateAnnouncement(id, announcementDetails));
     }
 

@@ -4,6 +4,8 @@ import com.example.massagesystem.user.User;
 import com.example.massagesystem.service.MassageService;
 import com.example.massagesystem.shop.Shop; // Shop 임포트
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -28,9 +30,11 @@ public class Booking {
     @JoinColumn(name = "service_id", nullable = false)
     private MassageService service;
 
+    @NotNull(message = "예약 시간은 필수 입력 값입니다.")
     @Column(nullable = false)
     private LocalDateTime bookingTime;
 
+    @NotBlank(message = "상태는 필수 입력 값입니다.")
     @Column(nullable = false)
     private String status; // e.g., PENDING, CONFIRMED, CANCELLED
 

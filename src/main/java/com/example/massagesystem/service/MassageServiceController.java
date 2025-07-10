@@ -3,6 +3,7 @@ package com.example.massagesystem.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class MassageServiceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MassageService> updateService(@PathVariable Long id, @RequestBody MassageService massageServiceDetails) {
+    public ResponseEntity<MassageService> updateService(@PathVariable Long id, @Valid @RequestBody MassageService massageServiceDetails) {
         return ResponseEntity.ok(massageServiceService.updateService(id, massageServiceDetails));
     }
 

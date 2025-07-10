@@ -1,6 +1,8 @@
 package com.example.massagesystem.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -23,12 +25,17 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "사용자 이름은 필수 입력 값입니다.")
+    @Size(min = 4, max = 20, message = "사용자 이름은 4자 이상 20자 이하로 입력해야 합니다.")
     @Column(unique = true, nullable = false)
     private String username;
 
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "역할은 필수 입력 값입니다.")
     @Column(nullable = false)
     private String role; // e.g., ADMIN, USER
 
