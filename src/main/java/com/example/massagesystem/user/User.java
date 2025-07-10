@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.example.massagesystem.shop.Shop; // Shop 임포트
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,10 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String role; // e.g., ADMIN, USER
+
+    @ManyToOne // User와 Shop은 Many-to-One 관계
+    @JoinColumn(name = "shop_id", nullable = false) // shop_id 컬럼으로 매핑
+    private Shop shop;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

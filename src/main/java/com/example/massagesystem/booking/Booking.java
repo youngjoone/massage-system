@@ -2,6 +2,7 @@ package com.example.massagesystem.booking;
 
 import com.example.massagesystem.user.User;
 import com.example.massagesystem.service.MassageService;
+import com.example.massagesystem.shop.Shop; // Shop 임포트
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,8 @@ public class Booking {
 
     @Column(nullable = false)
     private String status; // e.g., PENDING, CONFIRMED, CANCELLED
+
+    @ManyToOne // Booking과 Shop은 Many-to-One 관계
+    @JoinColumn(name = "shop_id", nullable = false) // shop_id 컬럼으로 매핑
+    private Shop shop;
 }

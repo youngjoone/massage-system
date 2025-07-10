@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,11 +56,12 @@ public class SecurityConfig {
             .and()
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안 함
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/users/register", "/api/users/login", "/api/auth/login").permitAll() // 로그인 엔드포인트 추가
-                .requestMatchers("/api/auth/me", "/api/auth/logout").authenticated() // /api/auth/me 및 /api/auth/logout 엔드포인트는 인증 필요
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // OPTIONS 요청은 모두 허용
+                .requestMatchers("/api/auth/register", "/api/shops", "/api/auth/login").permitAll() // 회원가입, 가게 목록, 로그인 엔드포인트 허용
+                .requestMatchers("/api/auth/me", "/api/auth/logout", "/api/auth/refresh-token").authenticated() // /me, 로그아웃, 리프레시 토큰 엔드포인트는 인증 필요
                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
             )
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+            .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
     }
 
