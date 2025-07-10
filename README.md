@@ -1,50 +1,66 @@
-# Massage System Backend
-
-## 🧾 프로젝트 개요
+# 🧘‍♀️ Massage System Backend
 
 마사지 예약 시스템의 백엔드 애플리케이션입니다.  
-사용자 관리, 마사지 서비스, 예약, 공지사항 등 프론트엔드와 통신하는 RESTful API를 제공합니다.  
-JWT와 HttpOnly 쿠키를 활용한 보안 인증 및 세션 관리를 구현하였습니다.
+사용자 인증, 마사지 서비스 정보, 예약 관리, 공지사항 등 프론트엔드와 통신하는 모든 RESTful API를 제공합니다.
+
+Spring Security 기반 인증/인가 기능과 JWT + HttpOnly 쿠키를 이용한 세션 관리를 구현하여 보안을 강화했습니다.
 
 ---
 
-## ⚙️ 기술 스택
+## 🚀 기술 스택
 
-- **언어:** Java 17  
-- **프레임워크:** Spring Boot 3.x  
-- **웹:** Spring Web (RESTful API)  
-- **데이터베이스:** H2 (개발/테스트용 인메모리 또는 파일 기반)  
-- **ORM:** Spring Data JPA (Hibernate)  
-- **보안:** Spring Security (JWT, BCryptPasswordEncoder)  
-- **JWT 라이브러리:** JJWT (io.jsonwebtoken)  
-- **유틸리티:** Lombok  
-- **빌드 도구:** Maven  
+| 분류       | 사용 기술                                  |
+|------------|---------------------------------------------|
+| 언어       | Java 17                                     |
+| 프레임워크 | Spring Boot 3.x                             |
+| 웹         | Spring Web (REST API)                       |
+| 데이터베이스 | H2 (개발/테스트용 인메모리 or 파일 기반) |
+| ORM        | Spring Data JPA (Hibernate)                 |
+| 보안       | Spring Security, JWT, BCryptPasswordEncoder |
+| 빌드 도구  | Maven                                       |
+| 기타       | Lombok, JJWT (io.jsonwebtoken)              |
 
 ---
 
-## 🔐 인증 및 토큰 흐름
+## 🔐 인증 및 세션 흐름
 
-### 1. 로그인 요청
-- 프론트엔드(React)에서 `/api/auth/login`으로 사용자명과 비밀번호를 POST 전송  
-- `axios`는 `withCredentials: true` 옵션을 사용하여 HttpOnly 쿠키 수신을 준비
+### 1. 로그인
 
-### 2. 백엔드 인증 및 토큰 발급
-- `UserService`가 사용자 정보 검증  
-- 성공 시 `JwtTokenProvider`가 **Access Token**을 발급 (만료 시간 짧음)  
-- `RefreshTokenService`가 **Refresh Token**을 발급하고 DB에 저장 (만료 시간 김)  
-- 두 토큰은 HttpOnly 쿠키(`accessToken`, `refreshToken`)로 응답 헤더에 포함됨  
+- 프론트엔드에서 `/api/auth/login` 으로 사용자명과 비밀번호를 `POST` 요청
+- `axios`는 `withCredentials: true` 옵션을 설정하여 HttpOnly 쿠키 수신 준비
+
+### 2. 인증 및 토큰 발급
+
+- `UserService`에서 사용자 검증
+- 인증 성공 시:
+  - `JwtTokenProvider`가 **Access Token** 발급 (짧은 만료 시간)
+  - `RefreshTokenService`가 **Refresh Token** 발급 → DB에 저장 (긴 만료 시간)
+- 두 토큰은 HttpOnly 쿠키(`accessToken`, `refreshToken`)로 클라이언트에 전달
 
 ### 3. 보호된 API 요청 처리
-- 브라우저는 저장된 쿠키를 자동으로 포함해 요청  
-- 백엔드의 `JwtAuthenticationFilter`가 쿠키 내 Access Token을 검증  
-- 유효 시 Spring Security Context에 인증 정보 설정  
 
-### 4. Access Token 만료 시
-- 백엔드는 401 Unauthorized 반환  
-- 프론트의 `axios` 인터셉터가 `/api/auth/refresh-token`으로 Access Token 재요청  
-- 백엔드는 Refresh Token 검증 후 새 Access Token 발급 → 쿠키에 저장  
-- 프론트는 이전 요청을 자동 재시도  
+- 브라우저는 저장된 HttpOnly 쿠키를 자동으로 포함해 API 요청
+- `JwtAuthenticationFilter`가 Access Token 검증 → 유효하면 인증된 사용자로 처리
 
-### 5. 로그아웃 (예정)
-- 프론트에서 `/api/auth/logout` 요청  
-- 백엔드는 Refresh Token 삭제, 쿠키 무효화로 세션 종료 처리  
+### 4. Access Token 만료 시 재발급
+
+- Access Token이 만료된 요청 → `401 Unauthorized` 응답
+- `axios` 인터셉터가 `/api/auth/refresh-token` 으로 Refresh Token 이용해 새 Access Token 요청
+- 백엔드는 Refresh Token 유효성 검사 후 새 Access Token 발급 → 쿠키로 전송
+- 실패했던 원본 요청은 자동 재시도됨
+
+### 5. 로그아웃
+
+- 프론트엔드가 `/api/auth/logout` 호출
+- 백엔드는:
+  - Refresh Token DB에서 제거
+  - Access/Refresh 쿠키 만료 설정으로 세션 종료
+
+---
+
+## 🧪 개발용 데이터베이스 (H2)
+
+- 접속 URL: `http://localhost:8080/h2-console`
+- JDBC URL: `jdbc:h2:file:./data/massagedb`
+- 사용자명/비밀번호: `sa` / (빈값)
+
