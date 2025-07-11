@@ -2,10 +2,13 @@ package com.example.massagesystem;
 
 import com.example.massagesystem.announcement.Announcement;
 import com.example.massagesystem.announcement.AnnouncementRepository;
+import com.example.massagesystem.customer.Customer;
+import com.example.massagesystem.customer.CustomerRepository;
 import com.example.massagesystem.shop.Shop;
 import com.example.massagesystem.shop.ShopRepository;
 import com.example.massagesystem.user.User;
 import com.example.massagesystem.user.UserRepository;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,13 +41,19 @@ public class MassageSystemApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demoData(ShopRepository shopRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, AnnouncementRepository announcementRepository) {
+	public Hibernate6Module hibernate6Module() {
+		return new Hibernate6Module();
+	}
+
+	@Bean
+	public CommandLineRunner demoData(ShopRepository shopRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, AnnouncementRepository announcementRepository, CustomerRepository customerRepository) {
 		return args -> {
 			// Shop 데이터 생성
 			Shop shopA = new Shop(null, "마사지샵 A", "서울시 강남구", "02-1111-2222");
 			Shop shopB = new Shop(null, "마사지샵 B", "서울시 서초구", "02-3333-4444");
 			shopRepository.save(shopA);
 			shopRepository.save(shopB);
+
 
 			// 사용자 데이터 생성 (사장님)
 			User adminA = new User(null, "adminA", passwordEncoder.encode("password"), "ADMIN", shopA);
@@ -65,6 +74,15 @@ public class MassageSystemApplication {
 			Announcement announcement2 = new Announcement(null, "새로운 기능 추가", "고객 관리 편의를 위한 새로운 기능이 추가되었습니다. 많은 이용 바랍니다.", LocalDateTime.now().plusDays(1));
 			announcementRepository.save(announcement1);
 			announcementRepository.save(announcement2);
+
+			// 손님 데이터 생성
+			Customer customerA1 = new Customer(null, "손님A1", "010-1234-5678", shopA);
+			Customer customerA2 = new Customer(null, "손님A2", "010-2345-6789", shopA);
+			Customer customerB1 = new Customer(null, "손님B1", "010-3456-7890", shopB);
+			customerRepository.save(customerA1);
+			customerRepository.save(customerA2);
+			customerRepository.save(customerB1);
+
 		};
 	}
 
