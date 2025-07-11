@@ -1,12 +1,7 @@
 package com.example.massagesystem.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -22,6 +17,16 @@ public class CustomerController {
     public List<CustomerResponseDto> getAllCustomers(@RequestParam(required = false) Long shopId) {
         System.out.println("CustomerController received shopId: " + shopId);
         return customerService.getAllCustomers(shopId);
+    }
+
+    @PostMapping
+    public Customer createCustomer(@RequestBody CustomerRequestDto requestDto) {
+        return customerService.createCustomer(requestDto);
+    }
+
+    @PutMapping("/{id}")
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody CustomerRequestDto requestDto) {
+        return customerService.updateCustomer(id, requestDto);
     }
 
     @DeleteMapping("/{id}")

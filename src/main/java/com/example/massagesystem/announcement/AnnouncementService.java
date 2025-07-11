@@ -13,7 +13,7 @@ public class AnnouncementService {
     private AnnouncementRepository announcementRepository;
 
     public List<Announcement> getAllAnnouncements() {
-        return announcementRepository.findAll();
+        return announcementRepository.findAllByDelFlagFalse();
     }
 
     public Optional<Announcement> getAnnouncementById(Long id) {

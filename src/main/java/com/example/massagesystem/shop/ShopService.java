@@ -18,7 +18,7 @@ public class ShopService {
     private UserRepository userRepository; // UserRepository 주입
 
     public List<Shop> getAllShops() {
-        return shopRepository.findAll();
+        return shopRepository.findAllByDelFlagFalse();
     }
 
     public Optional<Shop> getShopById(Long id) {
@@ -38,7 +38,12 @@ public class ShopService {
     }
 
     public void deleteShop(Long id) {
-        Shop shopToDelete = shopRepository.findByIdAndDelFlagFalse(id).orElseThrow(() -> new RuntimeException("Shop not found or already deleted"));
+        Shop shopToDelete = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+        if (shopToDelete.isDelFlag()) {
+            // 이미 삭제된 가게라면, 예외를 발생시키지 않고 단순히 반환하거나 로그를 남길 수 있습니다.
+            // 여기서는 이미 삭제된 가게라는 메시지를 포함한 예외를 발생시켜 프론트엔드에 알립니다.
+            throw new RuntimeException("Shop with ID " + id + " is already deleted.");
+        }
 
         // 해당 가게에 연결된 사용자가 있는지 확인 (논리적 삭제 시에도 유효성 검사 유지)
         if (!userRepository.findByShop(shopToDelete).isEmpty()) {
