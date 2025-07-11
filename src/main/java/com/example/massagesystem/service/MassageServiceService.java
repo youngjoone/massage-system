@@ -60,9 +60,10 @@ public class MassageServiceService {
 
     public void deleteService(Long id) {
         Shop currentUserShop = getCurrentUserShop();
-        MassageService massageService = massageServiceRepository.findById(id)
+        MassageService massageService = massageServiceRepository.findByIdAndDelFlagFalse(id)
                 .filter(s -> s.getShop().equals(currentUserShop))
-                .orElseThrow(() -> new RuntimeException("MassageService not found or unauthorized"));
-        massageServiceRepository.delete(massageService);
+                .orElseThrow(() -> new RuntimeException("MassageService not found or already deleted"));
+        massageService.setDelFlag(true);
+        massageServiceRepository.save(massageService);
     }
 }

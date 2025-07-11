@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.time.LocalDateTime;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class MassageSystemApplication {
 
 	public static void main(String[] args) {
@@ -70,8 +72,8 @@ public class MassageSystemApplication {
 			userRepository.save(userB1);
 
 			// 공지사항 데이터 생성
-			Announcement announcement1 = new Announcement(null, "시스템 점검 안내", "안녕하세요. 시스템 안정화를 위한 점검이 예정되어 있습니다. 서비스 이용에 참고 부탁드립니다.", LocalDateTime.now());
-			Announcement announcement2 = new Announcement(null, "새로운 기능 추가", "고객 관리 편의를 위한 새로운 기능이 추가되었습니다. 많은 이용 바랍니다.", LocalDateTime.now().plusDays(1));
+			Announcement announcement1 = new Announcement(null, "시스템 점검 안내", "안녕하세요. 시스템 안정화를 위한 점검이 예정되어 있습니다. 서비스 이용에 참고 부탁드립니다.");
+			Announcement announcement2 = new Announcement(null, "새로운 기능 추가", "고객 관리 편의를 위한 새로운 기능이 추가되었습니다. 많은 이용 바랍니다.");
 			announcementRepository.save(announcement1);
 			announcementRepository.save(announcement2);
 

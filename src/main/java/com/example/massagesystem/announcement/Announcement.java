@@ -1,19 +1,18 @@
 package com.example.massagesystem.announcement;
 
+import com.example.massagesystem.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Announcement {
+@EqualsAndHashCode(callSuper = true)
+public class Announcement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +28,10 @@ public class Announcement {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
+    // 더미 데이터 생성을 위한 생성자
+    public Announcement(Long id, String title, String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
     }
 }

@@ -25,13 +25,15 @@ public class AnnouncementService {
     }
 
     public Announcement updateAnnouncement(Long id, Announcement announcementDetails) {
-        Announcement announcement = announcementRepository.findById(id).orElseThrow(() -> new RuntimeException("Announcement not found"));
+        Announcement announcement = announcementRepository.findByIdAndDelFlagFalse(id).orElseThrow(() -> new RuntimeException("Announcement not found or already deleted"));
         announcement.setTitle(announcementDetails.getTitle());
         announcement.setContent(announcementDetails.getContent());
         return announcementRepository.save(announcement);
     }
 
     public void deleteAnnouncement(Long id) {
-        announcementRepository.deleteById(id);
+        Announcement announcementToDelete = announcementRepository.findByIdAndDelFlagFalse(id).orElseThrow(() -> new RuntimeException("Announcement not found or already deleted"));
+        announcementToDelete.setDelFlag(true);
+        announcementRepository.save(announcementToDelete);
     }
 }

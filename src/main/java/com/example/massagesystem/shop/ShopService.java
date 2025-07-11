@@ -38,13 +38,14 @@ public class ShopService {
     }
 
     public void deleteShop(Long id) {
-        Shop shopToDelete = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+        Shop shopToDelete = shopRepository.findByIdAndDelFlagFalse(id).orElseThrow(() -> new RuntimeException("Shop not found or already deleted"));
 
-        // 해당 가게에 연결된 사용자가 있는지 확인
+        // 해당 가게에 연결된 사용자가 있는지 확인 (논리적 삭제 시에도 유효성 검사 유지)
         if (!userRepository.findByShop(shopToDelete).isEmpty()) {
             throw new IllegalStateException("Cannot delete shop: Users are still associated with this shop.");
         }
 
-        shopRepository.delete(shopToDelete);
+        shopToDelete.setDelFlag(true);
+        shopRepository.save(shopToDelete);
     }
 }

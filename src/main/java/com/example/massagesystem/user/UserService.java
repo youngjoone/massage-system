@@ -37,10 +37,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getAllUsers() {
-        Shop currentUserShop = getCurrentUserShop();
-        return userRepository.findAll().stream()
-                .filter(user -> user.getShop().equals(currentUserShop))
-                .collect(Collectors.toList());
+        return userRepository.findAllByDelFlagFalse();
     }
 
     public Optional<User> getUserById(Long id) {
@@ -83,17 +80,17 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsernameAndDelFlagFalse(username);
     }
 
     public Optional<User> validateUser(String username, String password) {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsernameAndDelFlagFalse(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsernameAndDelFlagFalse(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

@@ -80,9 +80,10 @@ public class BookingService {
 
     public void deleteBooking(Long id) {
         Shop currentUserShop = getCurrentUserShop();
-        Booking booking = bookingRepository.findById(id)
+        Booking booking = bookingRepository.findByIdAndDelFlagFalse(id)
                 .filter(b -> b.getShop().equals(currentUserShop))
                 .orElseThrow(() -> new RuntimeException("Booking not found or unauthorized"));
-        bookingRepository.delete(booking);
+        booking.setDelFlag(true);
+        bookingRepository.save(booking);
     }
 }

@@ -1,18 +1,21 @@
 
 package com.example.massagesystem.shop;
 
+import com.example.massagesystem.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Shop {
+@EqualsAndHashCode(callSuper = true)
+public class Shop extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

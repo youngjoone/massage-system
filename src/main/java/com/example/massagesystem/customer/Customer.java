@@ -1,11 +1,13 @@
 package com.example.massagesystem.customer;
 
+import com.example.massagesystem.common.BaseEntity;
 import com.example.massagesystem.shop.Shop;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "customers")
@@ -13,7 +15,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+@EqualsAndHashCode(callSuper = true)
+public class Customer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

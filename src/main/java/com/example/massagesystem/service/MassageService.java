@@ -1,5 +1,6 @@
 package com.example.massagesystem.service;
 
+import com.example.massagesystem.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -8,13 +9,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import com.example.massagesystem.shop.Shop; // Shop 임포트
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MassageService {
+@EqualsAndHashCode(callSuper = true)
+public class MassageService extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

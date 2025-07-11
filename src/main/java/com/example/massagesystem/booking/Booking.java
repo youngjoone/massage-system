@@ -1,5 +1,6 @@
 package com.example.massagesystem.booking;
 
+import com.example.massagesystem.common.BaseEntity;
 import com.example.massagesystem.user.User;
 import com.example.massagesystem.service.MassageService;
 import com.example.massagesystem.shop.Shop; // Shop 임포트
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +18,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Booking {
+@EqualsAndHashCode(callSuper = true)
+public class Booking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
